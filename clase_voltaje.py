@@ -26,20 +26,26 @@ class Señal:
     def Armonica(V,f,T):
 
         onda=''
-        onda_plot=''
         cant_puntos = int(BITRATE * T)
         silencios = cant_puntos % BITRATE
         
         for x in range(cant_puntos):
             onda += chr(int(math.sin(x / ((BITRATE / f) / math.pi)) * 127 + 128))
-            #onda_plot += int(math.sin(x / ((BITRATE / f) / math.pi)) * 127 + 128)
+            
         #Llenamos lo que falta de duracion con silencios
         for x in range(silencios): 
             onda += chr(128)
-            #onda_plot += 0
         
-        #plt.plot(onda)
-            
+        dom= np.array(range(cant_puntos))
+        
+        #grafica la señal enviada
+        onda_plot=np.sin(dom)*127+128
+        plt.figure(1)
+        plt.plot(dom,onda_plot)
+        plt.xlabel('Frame')
+        plt.ylabel('Intensidad')
+        
+        #ejecuta la señal
         p = pa()
         stream = p.open(
             format=p.get_format_from_width(1),
@@ -52,6 +58,5 @@ class Señal:
         stream.close()
         p.terminate()
         
-        #return onda_plot
     
     
