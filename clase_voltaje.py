@@ -11,8 +11,10 @@ Created on Sun Aug 26 17:15:27 2018
 
 import numpy as np
 import matplotlib.pyplot as plt
+import pyaudio
 from pyaudio import PyAudio as pa
 import math
+import wave
 
 BITRATE=44100
 
@@ -92,42 +94,66 @@ class Señal:
         
         #------------Medicion-------------------------------------
         
+    def Medir(dur_med):        #Devuelve un array con una medicion de voltaje de duracion dur_med.
+        FORMAT = pyaudio.paInt16
+        CHANNELS = 1   #creo que si ponemos 2 es estereo
+        #RATE = 44100
+        CHUNK = 1024          #Espacio que ocupa un bloque de datos del buffer. La señal se divide en estos "chunks".
+        #RECORD_SECONDS = 5
+        nombre_arch = 'arch.wav'
+ 
+        p = pa()
+ 
+# Empieza a grabar
+        stream = p.open(format=FORMAT, channels=CHANNELS,
+                rate=BITRATE, input=True,
+                frames_per_buffer=CHUNK)
+        print('grabando...')
+        frames = []
+ 
+        for i in range(0, int(BITRATE / CHUNK * dur_med)):
+            data = stream.read(CHUNK)
+        frames.append(data)
+        print('finalizando grabación...')
         
-#        FORMAT = pyaudio.paInt16
-#CHANNELS = 2
-#RATE = 44100
-#CHUNK = 1024
-#RECORD_SECONDS = 5
-#WAVE_OUTPUT_FILENAME = "file.wav"
-# 
-#audio = pyaudio.PyAudio()
-# 
-## start Recording
-#stream = audio.open(format=FORMAT, channels=CHANNELS,
-#                rate=RATE, input=True,
-#                frames_per_buffer=CHUNK)
-#print "recording..."
-#frames = []
-# 
-#for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-#    data = stream.read(CHUNK)
-#    frames.append(data)
-#print "finished recording"
-# 
-# 
-## stop Recording
-#stream.stop_stream()
-#stream.close()
-#audio.terminate()
-# 
-#waveFile = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
-#waveFile.setnchannels(CHANNELS)
-#waveFile.setsampwidth(audio.get_sample_size(FORMAT))
-#waveFile.setframerate(RATE)
-#waveFile.writeframes(b''.join(frames))
-#waveFile.close()
         
-        #LA IDEA ES MODIFICAR ESO PARA OBTENER UN ARRAY PLOTEABLE COMO RESULTADO. LA PARTE DEL WAV SE PUEDE SALTEAR
+# Termina de grabar
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+ 
+    #Crea un archivo temporal .wav para poder recuperarlo como array mas tarde.
+        waveFile = wave.open(nombre_arch, 'wb')
+        waveFile.setnchannels(CHANNELS)
+        waveFile.setsampwidth(p.get_sample_size(FORMAT))
+        waveFile.setframerate(BITRATE)
+        waveFile.writeframes(b''.join(frames))
+        waveFile.close()
+        
+        arch_temp = wave.open('arch.wav','r')
+
+#Extrae un array de la señal wav
+        señal = arch_temp.readframes(-1)
+        señal = np.fromstring(señal, 'Int16')
+
+        return señal
+
+##If Stereo
+#if spf.getnchannels() == 2:       ---------esta sentencia impide ingresar dos canales. Chequear si es necesaria------
+#    print 'Just mono files'
+#    sys.exit(0)
+
+#        plt.figure(1)
+#        plt.title('Signal Wave...')  -------El ploteo prefiero dejarlo fuera de la clase-------
+#        plt.plot(señal)
+#        plt.show()
+#        
+        
+    #----------------------------------------------COMENTARIO IMPORTANTE----------------------------------------------
+    
+    #queda chequear que este midiendo bien con el microfono y/o el cable del labo. Hay que ver si mide en bits (de 0 a 255), en cuyo
+    #caso agregar la siguiente linea:    señal=señal*5/255   (suponiendo que la placa entrega de 0 a 5V)
+        
         
         
         
