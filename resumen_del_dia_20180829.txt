@@ -1,4 +1,4 @@
-Resumen del día:
+﻿Resumen del día:
 ----------------
 	Sabemos que la placa de nuestra compu trabaja en el rango -0.6V 0.6V. Es decir, las señales que se pueden generar con la placa tendrán una amplitud máxima de 1.20Vpp. Tuvimos que hacer unos cambios en el script porque estaba escrito pensando que la placa funcionaba entre 0 y 5V.
 
@@ -39,4 +39,4 @@ To do:
 	-medir curvas características de algunos componentes electrónicos
 
 	
-	
+	X
