@@ -39,4 +39,3 @@ To do:
 	-medir curvas características de algunos componentes electrónicos
 
 	
-	X
