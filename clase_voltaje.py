@@ -96,10 +96,6 @@ def emitir(onda=None,bitrate,callback=None):
 
         while stream.is_active():
             time.sleep(0.1)
-        
-        stream.stop_stream()
-        stream.close()
-        p.terminate()
 
     elif onda: #modo bloqueo
         stream = p.open(
@@ -109,9 +105,9 @@ def emitir(onda=None,bitrate,callback=None):
             output=True,
             )
         stream.write(onda)
-        stream.stop_stream()
-        stream.close()
-   
+    
+    stream.stop_stream()
+    stream.close()
     p.terminate()
     
     
@@ -120,28 +116,43 @@ def emitir(onda=None,bitrate,callback=None):
     
     #------------Medicion-------------------------------------
     
-def medir(dur_med):        #Devuelve un array con una medicion de voltaje de duracion dur_med.
+def medir(dur_med, callback=None):        #Devuelve un array con una medicion de voltaje de duracion dur_med.
     FORMAT = pyaudio.paInt16
     CHANNELS = 1   #creo que si ponemos 2 es estereo
-    #RATE = 44100
     CHUNK = 1024          #Espacio que ocupa un bloque de datos del buffer. La señal se divide en estos "chunks".
-    #RECORD_SECONDS = 5
     nombre_arch = 'arch.wav'
+    frames = []
  
     p = pa()
  
 # Empieza a grabar
-    stream = p.open(format=FORMAT, channels=CHANNELS,
-            rate=BITRATE, input=True,
-            frames_per_buffer=CHUNK)
-    print('grabando...')
-    frames = []
- 
-    for i in range(0, int(BITRATE / CHUNK * dur_med)):
-        data = stream.read(CHUNK)
-    frames.append(data)
-    print('finalizando grabación...')
     
+    if callback:
+        stream = p.open(format=FORMAT, channels=CHANNELS,
+        rate=BITRATE, input=True,
+        frames_per_buffer=CHUNK, stream_callback=callback)
+        stream.start_stream()
+        
+        while stream.is_active():
+           time.sleep(0.1)
+           print('grabando...')
+           for i in range(0, int(BITRATE / CHUNK * dur_med)):
+               data = stream.read(CHUNK)
+           frames.append(data)
+           print('finalizando grabación...')
+
+#no se si esta bien implementada la funcion callback. está bien pedir el read??
+    
+    else: # modo bloqueo
+        stream = p.open(format=FORMAT, channels=CHANNELS,
+                rate=BITRATE, input=True,
+                frames_per_buffer=CHUNK)
+   
+        print('grabando...')
+        for i in range(0, int(BITRATE / CHUNK * dur_med)):
+            data = stream.read(CHUNK)
+        frames.append(data)
+        print('finalizando grabación...')
     
 # Termina de grabar
     stream.stop_stream()
