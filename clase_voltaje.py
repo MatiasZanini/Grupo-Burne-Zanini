@@ -82,7 +82,7 @@ def armonica(freq_arm,dur_arm):  #Señal armonica de amplitud 256 bits (suponemo
 #---------------------------------------------------------------------------------------------------------------------------
 #Ejecución de la señal de emisión
     
-def emitir(onda,bitrate,callback=None):    
+def emitir(onda=None,bitrate,callback=None):    
               
     p = pa()
     if callback: #modo callback
@@ -101,7 +101,7 @@ def emitir(onda,bitrate,callback=None):
         stream.close()
         p.terminate()
 
-    else: #modo bloqueo
+    elif onda: #modo bloqueo
         stream = p.open(
             format=p.get_format_from_width(1),
             channels=1,
