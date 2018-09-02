@@ -1,7 +1,7 @@
 #Importamos las librerías
 
 import numpy as np
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import pyaudio
 from pyaudio import PyAudio as pa
 import math
@@ -33,16 +33,28 @@ def armonica(freq_arm,dur_arm):  #Señal armonica de amplitud 256 bits (suponemo
     for x in range(silencios): 
         onda += chr(128)
     
-    return onda;
-
-    #dom= np.array(range(cant_puntos))
+    #test: grafica un pedazo de la señal enviada (si no hay que hacer mucho zoom para ver)
+    t = np.arange(0,dur_arm/10**3,1/BITRATE)
+    onda_plot=np.sin(t*freq_arm)*126/2+128/2
+    plt.figure(1)
+    plt.plot(t, onda_plot)
+    plt.xlabel('Frame')
+    plt.ylabel('Intensidad')
+    plt.show()
     
-    #grafica la señal enviada
-    #        onda_plot=np.sin(dom)*127+128
-    #        plt.figure(1)
-    #        plt.plot(dom,onda_plot)
-    #        plt.xlabel('Frame')
-    #        plt.ylabel('Intensidad')
+# esto es igual pero en vez de graficar vs t grafica por cant de puntos    
+#    #test: grafica un pedazo de la señal enviada (si no hay que hacer mucho zoom para ver)
+#    #dom= np.array(range(cant_puntos/10**3))
+#    onda_plot=np.sin(dom / ((BITRATE / freq_arm) / math.pi))*126/2+128/2
+#    plt.figure(1)
+#    plt.plot(dom, onda_plot)
+#    plt.xlabel('Frame')
+#    plt.ylabel('Intensidad')
+#    plt.show()
+#    
+    return onda;
+    
+
 
 
 def cuadrada(amp, frec, dur):
