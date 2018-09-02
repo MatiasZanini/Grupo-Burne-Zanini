@@ -34,7 +34,7 @@ def armonica(freq_arm,dur_arm):  #Señal armonica de amplitud 256 bits (suponemo
         onda += chr(128)
     
     return onda;
-    
+
     #dom= np.array(range(cant_puntos))
     
     #grafica la señal enviada
@@ -43,6 +43,28 @@ def armonica(freq_arm,dur_arm):  #Señal armonica de amplitud 256 bits (suponemo
     #        plt.plot(dom,onda_plot)
     #        plt.xlabel('Frame')
     #        plt.ylabel('Intensidad')
+
+
+def cuadrada(amp, frec, dur):
+    t = np.arange(0,dur,1/BITRATE)
+   
+    if amp <= 1.20:
+        amp_bit= amp*256/1.20 #convierte de volts a bits
+        cuadrada = amp_bit*signal.square(2 * np.pi * frec * t)
+        if cuadrada < 0:
+            cuadrada = cuadrada + amp_bit
+         
+        cuadrada_lista = list(cuadrada)
+        señal = ''
+        for x in range(len(t)):
+            señal += chr(int(cuadrada_lista[x]))
+        
+        return señal;
+    
+    else:
+        return ('El voltaje debe ser menor a 1.20V')
+  
+
 
 #def Cte(amp_cte,dur_cte):  #Señal constante de voltaje amp_cte y duracion dur_cte, asumiendo que la placa entrega de 0V a 1.2V
 #    
