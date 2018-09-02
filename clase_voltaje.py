@@ -54,8 +54,31 @@ def armonica(freq_arm,dur_arm):  #Señal armonica de amplitud 256 bits (suponemo
 #    plt.show()
 #    
     return onda;
-    
 
+def armonica_2(amp,frec,dur): #amp es Vpp
+    t = np.arange(0,dur,1/BITRATE)
+   
+    if amp <= 1.20:
+        amp_bit= amp*256/1.20 #convierte de volts a bits
+        armonica = (amp_bit/2)*(np.sin(2 * np.pi * frec * t) + 1)
+         
+        armonica_lista = list(armonica)
+        señal = ''
+        for x in range(len(t)):
+            señal += chr(int(armonica_lista[x]))
+
+        #test: grafica un pedazo de la señal enviada
+        t_plot = np.arange(0,dur/10**3,1/BITRATE)
+        plt.figure(2)
+        plt.plot(t_plot, armonica[:len(t_plot)]*amp/amp_bit)
+        plt.xlabel('Tiempo')
+        plt.ylabel('Intensidad')
+        plt.show()
+        
+        return armonica;
+    
+    else:
+        return ('El voltaje debe ser menor a 1.20V')
 
 
 def cuadrada(amp, frec, dur):
