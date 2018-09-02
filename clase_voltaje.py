@@ -63,10 +63,7 @@ def cuadrada(amp, frec, dur):
    
     if amp <= 1.20:
         amp_bit= amp*256/1.20 #convierte de volts a bits
-        cuadrada = amp_bit*signal.square(2 * np.pi * frec * t)
-        for i in range(len(t)):
-            if cuadrada[i] < 0:
-                cuadrada[i] = 0
+        cuadrada = (amp_bit/2)*(signal.square(2 * np.pi * frec * t) + 1)
          
         cuadrada_lista = list(cuadrada)
         señal = ''
@@ -76,7 +73,7 @@ def cuadrada(amp, frec, dur):
         #test: grafica un pedazo de la señal enviada
         t_plot = np.arange(0,dur/10**3,1/BITRATE)
         plt.figure(2)
-        plt.plot(t_plot, cuadrada[:len(t_plot)])
+        plt.plot(t_plot, cuadrada[:len(t_plot)]*amp/amp_bit)
         plt.xlabel('Tiempo')
         plt.ylabel('Intensidad')
         plt.show()
