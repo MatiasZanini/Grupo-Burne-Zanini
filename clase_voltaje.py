@@ -7,6 +7,7 @@ from pyaudio import PyAudio as pa
 import math
 import wave 
 import time
+from scipy import signal
 
 #%% Seteamos el rate
 
@@ -20,7 +21,7 @@ BITRATE=44100
 #---------------------------------------------------------------------------------------------------------------------------
 #Tipos de ondas    
 
-def armonica(freq_arm,dur_arm):  #Señal armonica de amplitud 256 bits (suponemos 5V), frecuencia freq_arm, duracion dur_arm.
+def armonica(freq_arm,dur_arm):  #Señal armonica de amplitud 256 bits (suponemos 1.2V), frecuencia freq_arm, duracion dur_arm.
 
     onda=''
     cant_puntos = int(BITRATE * dur_arm)
@@ -38,7 +39,7 @@ def armonica(freq_arm,dur_arm):  #Señal armonica de amplitud 256 bits (suponemo
     onda_plot=np.sin(t*freq_arm)*126/2+128/2
     plt.figure(1)
     plt.plot(t, onda_plot)
-    plt.xlabel('Frame')
+    plt.xlabel('Tiempo')
     plt.ylabel('Intensidad')
     plt.show()
     
@@ -63,15 +64,24 @@ def cuadrada(amp, frec, dur):
     if amp <= 1.20:
         amp_bit= amp*256/1.20 #convierte de volts a bits
         cuadrada = amp_bit*signal.square(2 * np.pi * frec * t)
-        if cuadrada < 0:
-            cuadrada = cuadrada + amp_bit
+        for i in range(len(t)):
+            if cuadrada[i] < 0:
+                cuadrada[i] = 0
          
         cuadrada_lista = list(cuadrada)
         señal = ''
         for x in range(len(t)):
             señal += chr(int(cuadrada_lista[x]))
+
+        #test: grafica un pedazo de la señal enviada
+        t_plot = np.arange(0,dur/10**3,1/BITRATE)
+        plt.figure(2)
+        plt.plot(t_plot, cuadrada[:len(t_plot)])
+        plt.xlabel('Tiempo')
+        plt.ylabel('Intensidad')
+        plt.show()
         
-        return señal;
+        return cuadrada;
     
     else:
         return ('El voltaje debe ser menor a 1.20V')
