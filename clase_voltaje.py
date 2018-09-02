@@ -85,6 +85,33 @@ def cuadrada(amp, frec, dur):
     
     else:
         return ('El voltaje debe ser menor a 1.20V')
+
+
+def sawtooth(amp, frec, dur):
+    t = np.arange(0,dur,1/BITRATE)
+   
+    if amp <= 1.20:
+        amp_bit= amp*256/1.20 #convierte de volts a bits
+        sawtooth = (amp_bit/2)*(signal.sawtooth(2 * np.pi * frec * t) + 1) #si pongo 0.5 en el segundo arg de signal.sawtooth obtengo una triangular
+
+         
+        sawtooth_lista = list(sawtooth)
+        señal = ''
+        for x in range(len(t)):
+            señal += chr(int(sawtooth_lista[x]))
+
+        #test: grafica un pedazo de la señal enviada
+        t_plot = np.arange(0,dur/10**3,1/BITRATE)
+        plt.figure(2)
+        plt.plot(t_plot, sawtooth[:len(t_plot)]*amp/amp_bit)
+        plt.xlabel('Tiempo')
+        plt.ylabel('Intensidad')
+        plt.show()
+        
+        return sawtooth;
+    
+    else:
+        return ('El voltaje debe ser menor a 1.20V')
   
 
 #---------------------------------------------------------------------------------------------------------------------------
