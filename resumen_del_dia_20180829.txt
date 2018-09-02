@@ -29,9 +29,10 @@ Sobre la señal armónica que tenemos hasta el momento:
 To do:
 ------
 	En casa
-	-hacer funciones callback para emitir y medir
+	-hacer funciones callback para emitir y medir {ya están hechas pero hay que checkear la de medición}
 	-modificar el script para trabajar en stereo
-	-agregar otro tipo de ondas (cuadrada, diente de cierra)
+	-agregar otro tipo de ondas (cuadrada, diente de cierra) {listo}
+	-definir los strings de otra forma para no tener que usar chr
 
 	En el labo
 	-respuesta en frecuencias de la placa (ver qué pasa cerca del bitrate)
