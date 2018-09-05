@@ -175,14 +175,14 @@ def emitir(onda,callback=None):
         stream.stop_stream()
         stream.close()
         p.terminate()
-    
-    
+        
+
     
 #---------------------------------------------------------------------------------------------------------------------------
     
     #------------Medicion-------------------------------------
     
-def medir(dur_med, callback=None):        #Devuelve un array con una medicion de voltaje de duracion dur_med.
+def medir(dur_med):        #Devuelve un array con una medicion de voltaje de duracion dur_med.
     FORMAT = pyaudio.paInt16
     CHANNELS = 1   #creo que si ponemos 2 es estereo
     CHUNK = 1024          #Espacio que ocupa un bloque de datos del buffer. La senal se divide en estos "chunks".
@@ -192,33 +192,16 @@ def medir(dur_med, callback=None):        #Devuelve un array con una medicion de
     p = pa()
  
 # Empieza a grabar
-    
-    if callback:
-        stream = p.open(format=FORMAT, channels=CHANNELS,
-        rate=BITRATE, input=True,
-        frames_per_buffer=CHUNK, stream_callback=callback)
-        stream.start_stream()
-        
-        while stream.is_active():
-           time.sleep(0.1)
-           print('grabando...')
-           for i in range(0, int(BITRATE / CHUNK * dur_med)):
-               data = stream.read(CHUNK)
-           frames.append(data)
-           print('finalizando grabación...')
 
-#no se si esta bien implementada la funcion callback. está bien pedir el read??
-    
-    else: # modo bloqueo
-        stream = p.open(format=FORMAT, channels=CHANNELS,
-                rate=BITRATE, input=True,
-                frames_per_buffer=CHUNK)
+    stream = p.open(format=FORMAT, channels=CHANNELS,
+            rate=BITRATE, input=True,
+            frames_per_buffer=CHUNK)
    
-        print('grabando...')
-        for i in range(0, int(BITRATE / CHUNK * dur_med)):
-            data = stream.read(CHUNK)
-        frames.append(data)
-        print('finalizando grabación...')
+    print('grabando...')
+    for i in range(0, int(BITRATE / CHUNK * dur_med)):
+        data = stream.read(CHUNK)
+    frames.append(data)
+    print('finalizando grabación...')
     
 # Termina de grabar
     stream.stop_stream()
@@ -241,6 +224,34 @@ def medir(dur_med, callback=None):        #Devuelve un array con una medicion de
 
     return senal
 
+
+#emite y mide al mismo tiempo mientras esta activo el callback
+def playrec(onda,callback,medicion):    
+              
+    p = pa()
+    try:
+        #modo callback
+        print('modo callback')        
+        stream = p.open(
+            format=p.get_format_from_width(1),
+            channels=1,
+            rate=BITRATE,
+            output=True,
+            stream_callback=callback
+            )
+        stream.start_stream()
+
+        while stream.is_active():
+            medicion       
+            time.sleep(0.1)
+
+    except Exception as e:
+        print(e)
+    finally:
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+    return medicion    
 
 #---------------------------------------------------------------------------------------------------------------------------
 

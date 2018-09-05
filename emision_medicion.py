@@ -15,7 +15,7 @@ import time
 #%% Generamos una senal
 #volt.bitrate(44100) #creo que si lo hice bien, setea el BITRATE para todo el modulo clase_voltaje
 
-senal = volt.armonica(100, 5) #esto lo elegimos según la senal que querramos emitir
+senal = volt.armonica(100, 30) #esto lo elegimos según la senal que querramos emitir
 
 def por_partes(arr, largo):
     larr = len(arr)
@@ -33,7 +33,7 @@ def continuo_por_partes(arr, largo):
             yield arr[cursor:cursor+largo]
             cursor = min(cursor + largo, larr+1)
         
-gen = continuo_por_partes(senal, 1024)        
+gen = por_partes(senal, 1024)        
 
 #modo callback
 
@@ -42,13 +42,14 @@ def callback_emision(in_data, frame_count, time_info, status):  #stream_callback
     parte = next(gen)
     return (parte, pyaudio.paContinue)   
 
-emision_call = volt.emitir(senal, callback_emision)     
+#emision_call = volt.emitir(senal, callback_emision)     
 
 #modo bloqueo
 
 #emision_block = volt.emitir(senal)
 
-
+# probamos esto: volt.playrec(senal,callback_emision,volt.medir(10))
+#ver print de pantalla (primero graba despues mide)
 #%% Medimos senal
 
 #modo callback
