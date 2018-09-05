@@ -10,10 +10,13 @@ import time
 from scipy import signal
 
 #%% Seteamos el rate
-def bitrate(rate):
-    global BITRATE
-    BITRATE=rate
+#def bitrate(rate):
+#    global BITRATE
+#    BITRATE=rate
 
+BITRATE = 44100
+def print_bitrate():
+    print(BITRATE)
 #%% Creamos funciones para comunicarnos con la placa de audio
 
 
@@ -22,30 +25,30 @@ def bitrate(rate):
 #---------------------------------------------------------------------------------------------------------------------------
 #Tipos de ondas    
 
-def armonica(freq_arm,dur_arm):  #Señal armonica de amplitud 256 bits (suponemos 1.2V), frecuencia freq_arm, duracion dur_arm.
+def armonica(freq_arm,dur_arm):  #senal armonica de amplitud 256 bits (suponemos 1.2V), frecuencia freq_arm, duracion dur_arm.
 
     onda=''
     cant_puntos = int(BITRATE * dur_arm)
     silencios = cant_puntos % BITRATE
     
     for x in range(cant_puntos):
-        onda += chr(int(math.sin(x / ((BITRATE / freq_arm) / math.pi)) * 126/2 + 128/2))
+        onda+=chr(int(math.sin(x / ((BITRATE / freq_arm) / math.pi)) * 126/2 + 128/2))
         
     #Llenamos lo que falta de duracion con silencios
     for x in range(silencios): 
-        onda += chr(128)
+        onda+=chr(128)
     
-    #test: grafica un pedazo de la señal enviada (si no hay que hacer mucho zoom para ver)
-    t = np.arange(0,dur_arm/10**3,1/BITRATE)
-    onda_plot=np.sin(t*freq_arm)*126/2+128/2
-    plt.figure(1)
-    plt.plot(t, onda_plot)
-    plt.xlabel('Tiempo')
-    plt.ylabel('Intensidad')
-    plt.show()
+    #test: grafica un pedazo de la senal enviada (si no hay que hacer mucho zoom para ver)
+#    t = np.arange(0,dur_arm/10**3,1/BITRATE)
+#    onda_plot=np.sin(t*freq_arm)*126/2+128/2
+#    plt.figure(1)
+#    plt.plot(t, onda_plot)
+#    plt.xlabel('Tiempo')
+#    plt.ylabel('Intensidad')
+#    plt.show()
     
 # esto es igual pero en vez de graficar vs t grafica por cant de puntos    
-#    #test: grafica un pedazo de la señal enviada (si no hay que hacer mucho zoom para ver)
+#    #test: grafica un pedazo de la senal enviada (si no hay que hacer mucho zoom para ver)
 #    #dom= np.array(range(cant_puntos/10**3))
 #    onda_plot=np.sin(dom / ((BITRATE / freq_arm) / math.pi))*126/2+128/2
 #    plt.figure(1)
@@ -54,7 +57,7 @@ def armonica(freq_arm,dur_arm):  #Señal armonica de amplitud 256 bits (suponemo
 #    plt.ylabel('Intensidad')
 #    plt.show()
 #    
-    return onda;
+    return onda
 
 def armonica_2(amp,frec,dur): #amp es Vpp
     t = np.arange(0,dur,1/BITRATE)
@@ -64,11 +67,11 @@ def armonica_2(amp,frec,dur): #amp es Vpp
         armonica = (amp_bit/2)*(np.sin(2 * np.pi * frec * t) + 1)
          
         armonica_lista = list(armonica)
-        señal = ''
+        senal = ''
         for x in range(len(t)):
-            señal += chr(int(armonica_lista[x]))
+            senal += chr(int(armonica_lista[x]))
 
-        #test: grafica un pedazo de la señal enviada
+        #test: grafica un pedazo de la senal enviada
         t_plot = np.arange(0,dur/10**3,1/BITRATE)
         plt.figure(2)
         plt.plot(t_plot, armonica[:len(t_plot)]*amp/amp_bit)
@@ -90,11 +93,11 @@ def cuadrada(amp, frec, dur):
         cuadrada = (amp_bit/2)*(signal.square(2 * np.pi * frec * t) + 1)
          
         cuadrada_lista = list(cuadrada)
-        señal = ''
+        senal = ''
         for x in range(len(t)):
-            señal += chr(int(cuadrada_lista[x]))
+            senal += chr(int(cuadrada_lista[x]))
 
-        #test: grafica un pedazo de la señal enviada
+        #test: grafica un pedazo de la senal enviada
         t_plot = np.arange(0,dur/10**3,1/BITRATE)
         plt.figure(2)
         plt.plot(t_plot, cuadrada[:len(t_plot)]*amp/amp_bit)
@@ -117,11 +120,11 @@ def sawtooth(amp, frec, dur):
 
          
         sawtooth_lista = list(sawtooth)
-        señal = ''
+        senal = ''
         for x in range(len(t)):
-            señal += chr(int(sawtooth_lista[x]))
+            senal += chr(int(sawtooth_lista[x]))
 
-        #test: grafica un pedazo de la señal enviada
+        #test: grafica un pedazo de la senal enviada
         t_plot = np.arange(0,dur/10**3,1/BITRATE)
         plt.figure(2)
         plt.plot(t_plot, sawtooth[:len(t_plot)]*amp/amp_bit)
@@ -136,35 +139,42 @@ def sawtooth(amp, frec, dur):
   
 
 #---------------------------------------------------------------------------------------------------------------------------
-#Ejecución de la señal de emisión
+#Ejecución de la senal de emisión
+
     
-def emitir(onda=None,bitrate,callback=None):    
+def emitir(onda,callback=None):    
               
     p = pa()
-    if callback: #modo callback
-        stream = p.open(
-        format=p.get_format_from_width(1),
-        channels=1,
-        rate=BITRATE,
-        output=True,
-        stream_callback=callback)
-        stream.start_stream()
-
-        while stream.is_active():
-            time.sleep(0.1)
-
-    elif onda: #modo bloqueo
-        stream = p.open(
-            format=p.get_format_from_width(1),
-            channels=1,
-            rate=BITRATE,
-            output=True,
-            )
-        stream.write(onda)
+    try:
+        if callback: #modo callback
+            print('modo callback')        
+            stream = p.open(
+                format=p.get_format_from_width(1),
+                channels=1,
+                rate=BITRATE,
+                output=True,
+                stream_callback=callback
+                )
+            stream.start_stream()
     
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
+            while stream.is_active():
+                time.sleep(0.1)
+    
+        else: #modo bloqueo
+            print('modo bloqueo')        
+            stream = p.open(
+                format=p.get_format_from_width(1),
+                channels=1,
+                rate=BITRATE,
+                output=True,
+                )
+            stream.write(onda)
+    except Exception as e:
+        print(e)
+    finally:
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
     
     
     
@@ -175,7 +185,7 @@ def emitir(onda=None,bitrate,callback=None):
 def medir(dur_med, callback=None):        #Devuelve un array con una medicion de voltaje de duracion dur_med.
     FORMAT = pyaudio.paInt16
     CHANNELS = 1   #creo que si ponemos 2 es estereo
-    CHUNK = 1024          #Espacio que ocupa un bloque de datos del buffer. La señal se divide en estos "chunks".
+    CHUNK = 1024          #Espacio que ocupa un bloque de datos del buffer. La senal se divide en estos "chunks".
     nombre_arch = 'arch.wav'
     frames = []
  
@@ -225,11 +235,11 @@ def medir(dur_med, callback=None):        #Devuelve un array con una medicion de
     
     arch_temp = wave.open('arch.wav','r')
 
-#Extrae un array de la señal wav
-    señal = arch_temp.readframes(-1)
-    señal = np.fromstring(señal, 'Int16')
+#Extrae un array de la senal wav
+    senal = arch_temp.readframes(-1)
+    senal = np.fromstring(senal, 'Int16')
 
-    return señal
+    return senal
 
 
 #---------------------------------------------------------------------------------------------------------------------------
@@ -241,14 +251,14 @@ def medir(dur_med, callback=None):        #Devuelve un array con una medicion de
 
 #        plt.figure(1)
 #        plt.title('Signal Wave...')  -------El ploteo prefiero dejarlo fuera de la clase-------
-#        plt.plot(señal)
+#        plt.plot(senal)
 #        plt.show()
 #        
         
     #----------------------------------------------COMENTARIO IMPORTANTE----------------------------------------------
     
     #queda chequear que este midiendo bien con el microfono y/o el cable del labo. Hay que ver si mide en bits (de 0 a 255), en cuyo
-    #caso agregar la siguiente linea:    señal=señal*5/255   (suponiendo que la placa entrega de 0 a 5V)
+    #caso agregar la siguiente linea:    senal=senal*5/255   (suponiendo que la placa entrega de 0 a 5V)
         
 
         

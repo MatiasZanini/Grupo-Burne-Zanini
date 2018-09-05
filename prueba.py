@@ -22,7 +22,7 @@ p = pyaudio.PyAudio()
 # define callback (2)
 def callback(in_data, frame_count, time_info, status):
     data = wf.readframes(frame_count)
-    print(len(data))
+    #print(len(data))
     return (data, pyaudio.paContinue)
 
 # open stream using callback (3)

@@ -1,36 +1,55 @@
 #importamos módulo para comunicarnos con la placa y librerias
-import clase_voltaje.py as volt
+import clase_voltaje as volt
 
 import numpy as np
 import matplotlib.pyplot as plt
 import pyaudio
 from pyaudio import PyAudio as pa
-import wave 
+import wave
+import time
 
 
 
 
 
-#%% Generamos una señal
+#%% Generamos una senal
+#volt.bitrate(44100) #creo que si lo hice bien, setea el BITRATE para todo el modulo clase_voltaje
 
-BITRATE=volt.bitrate(44100) #creo que si lo hice bien, setea el BITRATE para todo el modulo clase_voltaje
+senal = volt.armonica(100, 5) #esto lo elegimos según la senal que querramos emitir
 
-señal = armonica(100,120) #esto lo elegimos según la señal que querramos emitir
+def por_partes(arr, largo):
+    larr = len(arr)
+    cursor = 0
+    while cursor < larr:
+        yield arr[cursor:cursor+largo]
+        cursor = min(cursor + largo, larr+1)
+
+
+def continuo_por_partes(arr, largo):
+    larr = len(arr)
+    while True:
+        cursor = 0    
+        while cursor < larr:
+            yield arr[cursor:cursor+largo]
+            cursor = min(cursor + largo, larr+1)
+        
+gen = continuo_por_partes(senal, 1024)        
 
 #modo callback
 
 def callback_emision(in_data, frame_count, time_info, status):  #stream_callback pide una función de 4 argumentos.
-		data = señal.readframes(frame_count) #pedazo de señal
-		return (data, pyaudio.paContinue)   
+    #data = senal.readframes(frame_count) #pedazo de senal
+    parte = next(gen)
+    return (parte, pyaudio.paContinue)   
 
-emision_call = volt.emitir(BITRATE, callback_emision)     
+emision_call = volt.emitir(senal, callback_emision)     
 
 #modo bloqueo
 
-#emision_block = emitir(señal, BITRATE)
+#emision_block = volt.emitir(senal)
 
 
-#%% Medimos señal
+#%% Medimos senal
 
 #modo callback
 
@@ -38,7 +57,7 @@ def callback_medición(in_data, frame_count, time_info, status):
     return (in_data, pyaudio.paContinue)
 # no se si está bien así la callback para medir
     
-medicion_call = medir(500, callback_medicion)
+medicion_call = volt.medir(500, callback_medicion)
 
 #modo bloqueo
 
