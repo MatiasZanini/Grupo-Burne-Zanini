@@ -1,5 +1,5 @@
 #importamos módulo para comunicarnos con la placa y librerias
-import clase_voltaje.py
+import clase_voltaje.py as volt
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,7 +8,12 @@ from pyaudio import PyAudio as pa
 import wave 
 
 
+
+
+
 #%% Generamos una señal
+
+BITRATE=volt.bitrate(44100) #creo que si lo hice bien, setea el BITRATE para todo el modulo clase_voltaje
 
 señal = armonica(100,120) #esto lo elegimos según la señal que querramos emitir
 
@@ -18,7 +23,7 @@ def callback_emision(in_data, frame_count, time_info, status):  #stream_callback
 		data = señal.readframes(frame_count) #pedazo de señal
 		return (data, pyaudio.paContinue)   
 
-emision_call = emitir(BITRATE, callback_emision)     
+emision_call = volt.emitir(BITRATE, callback_emision)     
 
 #modo bloqueo
 

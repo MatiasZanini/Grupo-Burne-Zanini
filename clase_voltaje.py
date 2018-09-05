@@ -10,8 +10,9 @@ import time
 from scipy import signal
 
 #%% Seteamos el rate
-
-BITRATE=44100
+def bitrate(rate):
+    global BITRATE
+    BITRATE=rate
 
 #%% Creamos funciones para comunicarnos con la placa de audio
 
