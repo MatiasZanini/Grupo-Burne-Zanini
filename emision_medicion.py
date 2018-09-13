@@ -15,7 +15,7 @@ import time
 #%% Generamos una senal
 #volt.bitrate(44100) #creo que si lo hice bien, setea el BITRATE para todo el modulo clase_voltaje
 
-senal = volt.armonica(100, 30) #esto lo elegimos según la senal que querramos emitir
+senal = volt.armonica(500, 60) #esto lo elegimos según la senal que querramos emitir
 
 def por_partes(arr, largo):
     larr = len(arr)
@@ -45,6 +45,14 @@ def callback_emision(in_data, frame_count, time_info, status):  #stream_callback
 #emision_call = volt.emitir(senal, callback_emision)     
 
 #modo bloqueo
+#%%
+
+datos=volt.playrec(callback_emision,25)
+
+plt.plot(datos)
+
+
+
 
 #emision_block = volt.emitir(senal)
 

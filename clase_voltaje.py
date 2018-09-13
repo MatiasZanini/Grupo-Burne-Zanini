@@ -226,7 +226,7 @@ def medir(dur_med):        #Devuelve un array con una medicion de voltaje de dur
 
 
 #emite y mide al mismo tiempo mientras esta activo el callback
-def playrec(onda,callback,medicion):    
+def playrec(callback,dur_med):    
               
     p = pa()
     try:
@@ -241,17 +241,22 @@ def playrec(onda,callback,medicion):
             )
         stream.start_stream()
 
+        data = np.empty([])
         while stream.is_active():
-            medicion       
             time.sleep(0.1)
-
+            lista=list(medir(dur_med))
+            np.append(data,lista)
+        
+            
     except Exception as e:
         print(e)
     finally:
         stream.stop_stream()
         stream.close()
         p.terminate()
-    return medicion    
+        data=np.asarray(data) 
+    return data
+       
 
 #---------------------------------------------------------------------------------------------------------------------------
 
