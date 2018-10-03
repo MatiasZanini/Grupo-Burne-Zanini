@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import voltaje_sd as volt
+from importlib import reload
 #%% emitir armonica y medir
 frecuencia = 5000  # frecuencia del tono que se desea emitir
 duracion = 1       # duracion del tono
@@ -20,19 +21,23 @@ with open("resultados_frecuencia=" + str(frecuencia) + ".txt", "w") as out_file:
 #%%
 #Respuesta en frecuencia de la placa de audio.
 amp, dur = 0.5, 5    
-freqs=np.concatenate(np.arange(0,105,5) , np.linspace(105, 20000, 10) , np.linspace(20000,44100,30))
+freqs=np.concatenate((np.arange(0.1,105,5) , np.linspace(105, 20000, 10) , np.linspace(20000,44100,30)))
 Nfreq=len(freqs)
 
 amplitudes = np.empty(Nfreq)
 for i in range(Nfreq):
-    amplitudes[i] = np.max(volt.playrec_tone(freqs[i],dur,amp,ch_in=1,ch_out=1,block)[2])
+    _,_, grabacion = volt.playrec_tone(freqs[i],dur,amp,ch_in=1,ch_out=1,block=True)
+    amplitudes[i] = np.max(grabacion)
     time.sleep(0.5)
 #comentario: en vez de un sleep podriamos hacer algun tipo de lazo de control
 # que solo continue iterando una vez finalizada la iteracion anterior
 # este lazo iria en playrec_tone, como indicador de finalizacion de medicion
 
+mediciones_barrido = np.empty([Nfreq,2])
+mediciones_barrido[:,0] = freqs
+mediciones_barrido[:,1] = amplitudes
+np.savetxt('barrido_frec.txt', mediciones_barrido, delimiter = ',')
 plt.plot(freqs, amplitudes)
-
 #%% prueba de lectura de argumentos
 #def suma(a,b,c=3,d=5):
 #    return a+b+c+d

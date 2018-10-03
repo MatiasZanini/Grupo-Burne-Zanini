@@ -1,12 +1,12 @@
 import sounddevice as sd
 import numpy as np
 #import pylab as lab
-import matplolib.pyplot as plt
+import matplotlib.pyplot as plt
 #import time
 #from scipy.signal import find_peaks
 #from scipy import signal
 #%%
-def playrec_tone(frecuencia, duracion, amplitud, fs=200000, ch_in=2, ch_out=1, block=None):
+def playrec_tone(frecuencia, duracion, amplitud, fs=200000, ch_in=2, ch_out=1, block=False):
     """
     Emite un tono y lo graba.
     """
