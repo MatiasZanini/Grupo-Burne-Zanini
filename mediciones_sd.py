@@ -4,9 +4,9 @@ import time
 import voltaje_sd as volt
 from importlib import reload
 #%% emitir armonica y medir
-circuito = 'diodo'
-frecuencia = 550  # frecuencia del tono que se desea emitir en Hz
-duracion = 10       # duracion del tono en segundos
+circuito = 'calibracion_ch2'
+frecuencia = 800  # frecuencia del tono que se desea emitir en Hz
+duracion = 20       # duracion del tono en segundos
 amplitud = 1   
 #R = 4591
 R2 = 900
@@ -23,8 +23,8 @@ una_medicion[:,3] = grabacion[:,1] #otro channel del mic
 
 np.savetxt('medicion_{}_{}.txt'.format(circuito,frecuencia), una_medicion, delimiter = ',')
 
-V_diodo = grabacion[:,1]-grabacion[:,0]
-I_diodo = grabacion[:,0]/R2
+V_diodo = grabacion[:,0]-grabacion[:,1]
+I_diodo = grabacion[:,1]/R2
 plt.plot(V_diodo, I_diodo)
 #with open("resultados_frecuencia=" + str(frecuencia) + ".txt", "w") as out_file:     # abre un archivo .txt, str(imprime el valor de la frecuencia)
 #    for i in range(len(tiempo)):                                           # tiempo, data y grabacion tienen las mismas dimensiones, un for para leer todo el array
@@ -58,6 +58,7 @@ mediciones_barrido[:,0] = freqs
 mediciones_barrido[:,1] = amplitudes
 np.savetxt('barrido_frec{}.txt'.format(numero_archivo), mediciones_barrido, delimiter = ',')
 plt.plot(freqs, amplitudes)
+#%%
 
 
 

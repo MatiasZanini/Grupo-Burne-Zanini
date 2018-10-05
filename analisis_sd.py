@@ -34,9 +34,10 @@ plt.grid(True)
 
 #%%
 # ------------------------------Curva IV diodo--------------------------------
-path = r'C:\Users\Matías\Desktop\Matías\Instrumentacion\mediciones 3-10/'
-t, entrada, canal1, canal2 = np.loadtxt(path+'medicion_diodo_700.txt', delimiter = ',', unpack =True)
-
+#path = r'C:\Users\Matías\Desktop\Matías\Instrumentacion\mediciones 3-10/'
+t, entrada, canal1, canal2 = np.loadtxt('medicion_diodo_550.txt', delimiter = ',', unpack =True)
+R2 = 900
+plt.plot(canal1-canal2, canal2/R2)
 
 
 
