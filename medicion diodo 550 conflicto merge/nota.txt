@@ -1,0 +1,2 @@
+cuando iba a pullear el repo me tiro un conflicto de que se iba a reemplazar esta medicion. por las dudas lo reubique para
+que no entre en conflicto durante el merge. Despues hay que chequear cual de las dos versiones es la correcta
