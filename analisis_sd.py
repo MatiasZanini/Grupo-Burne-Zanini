@@ -67,8 +67,8 @@ plt.plot(t,canal2,color='b',label='Canal 2')
 
 plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 20)
 plt.legend(loc=0,fontsize=16)
-plt.xlabel('Voltaje (V)',size=20)
-plt.ylabel('Corriente (mA)',size=20)
+plt.xlabel('Tiempo (s)',size=20)
+plt.ylabel('Amplitud',size=20)
 plt.grid(True)
 
 
