@@ -34,22 +34,22 @@ f=f/1000
 fzoom, azoom = np.loadtxt('barrido_frec2.txt', delimiter = ',', unpack =True)
 
 plt.subplots(1,2, sharey=True)
-plt.suptitle('Respuesta en frecuencia de la placa de audio')
+plt.suptitle('Respuesta en frecuencia de la placa de audio',size=20)
 
 g1 = plt.subplot(1,2,1)
 plt.plot(f,a,linewidth=3)
-plt.xlabel('Frecuencia (kHz)')
-plt.ylabel('Amplitud')
+plt.xlabel('Frecuencia (kHz)',size=20)
+plt.ylabel('Amplitud',size=20)
 plt.yticks(np.arange(0,0.45,0.05))
 plt.grid(True)
-
+plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 20)
 plt.subplot(1,2,2, sharey=g1)
 plt.plot(fzoom,azoom,linewidth=3)
-plt.xlabel('Frecuencia (Hz)')
-plt.ylabel('Amplitud')
+plt.xlabel('Frecuencia (Hz)',size=20)
+plt.ylabel('Amplitud',size=20)
 plt.xlim(xmin=0, xmax=3)
 plt.grid(True)
-
+plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 20)
 
 #%%
 
@@ -59,58 +59,59 @@ fs=20000
 frecuencia=550
 puntos_periodo = int(fs/frecuencia)
 
-t, entrada, canal1, canal2 = np.loadtxt('medicion_diodo_550.txt', delimiter = ',', unpack =True)
-plt.subplot(1,3,1)
+t, entrada, canal1, canal2 = np.loadtxt('medicion_diodo_450 - tab delimited.txt', delimiter = '\t', unpack =True)
 
-plt.plot(t,canal1,'.')
+plt.plot(t, entrada,color='C1',label='Entrada')
+plt.plot(t,canal1,color='r',label='Canal 1')
+plt.plot(t,canal2,color='b',label='Canal 2')
 
-plt.subplot(1,3,2)
+plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 20)
+plt.legend(loc=0,fontsize=16)
+plt.xlabel('Voltaje (V)',size=20)
+plt.ylabel('Corriente (mA)',size=20)
+plt.grid(True)
 
-plt.plot(t,canal2,'.')
-
-plt.subplot(1,3,3)
-plt.plot(t,entrada,'.')
-
-#[0:puntos_periodo]
 
 
 
 
 #%%
 # ------------------------------Curva IV diodo--------------------------------
-#path = r'C:\Users\Matías\Desktop\Matías\Instrumentacion\mediciones 3-10/'
-t, entrada, canal1, canal2 = np.loadtxt('medicion_diodo_550.txt', delimiter = ',', unpack =True)
+
+t, entrada, canal1, canal2 = np.loadtxt('medicion_diodo_450 - tab delimited.txt', delimiter = '\t', unpack =True)
 R2 = 900
 fs=20000
 frecuencia=550
 Vdiodo=(canal1-canal2)*factorconv   #en volts
 Idiodo=canal2/R2*factorconv*1000   #en miliamper
 
-inicio_curva=(np.abs(Vdiodo - np.min(Vdiodo))).argmin()
-fin_curva=(np.abs(Vdiodo -np.max(Vdiodo))).argmin()
 
-#plt.plot(Vdiodo[inicio_curva:fin_curva], Idiodo[inicio_curva:fin_curva],'.')
-plt.plot(Vdiodo, Idiodo,'.')
+Vdiodo_sin_transitorio=(canal1[59400:]-canal2[59400:])*factorconv
+Idiodo_sin_transitorio=canal2[59400:]*factorconv/R2*1000
+
+
+
+plt.plot(Vdiodo_sin_transitorio,Idiodo_sin_transitorio,'.')
 plt.tick_params(axis = 'both', which = 'both', length = 4, width = 2, labelsize = 20)
 
 puntos_periodo = int(fs/frecuencia)
  
-#plt.plot(Vdiodo[0:135*puntos_periodo], Idiodo[0:135*puntos_periodo],'.')
+
 plt.xlabel('Voltaje (V)',size=20)
 plt.ylabel('Corriente (mA)',size=20)
 plt.grid(True)
 
 
-Vdiodo2=Vdiodo[inicio_curva:fin_curva]
-Idiodo2=Idiodo[inicio_curva:fin_curva]
 
-Vf=np.max(Vdiodo2)
 
-indicevf=(np.abs(Vdiodo2-Vf)).argmin()
 
-If=Idiodo2[indicevf]
+Vf=np.max(Vdiodo_sin_transitorio) #en volts
 
-Pf=Vf*If*1000
+indicevf=(np.abs(Vdiodo_sin_transitorio-Vf)).argmin()
+
+If=Idiodo_sin_transitorio[indicevf] #en miliamper
+
+Pf=Vf*If*1000 #en miliwats
 
 
 
